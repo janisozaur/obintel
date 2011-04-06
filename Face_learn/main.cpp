@@ -1,11 +1,12 @@
+#include "facesextractor.h"
+#include "cfgreader.h"
+
 #include <QtCore/QCoreApplication>
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
-#include "facesextractor.h"
-#include "cfgreader.h"
-#include "floatfann.h"
-#include "fann_cpp.h"
+#include <floatfann.h>
+#include <fann_cpp.h>
 
 const QString cfgPath("cfg.txt");
 
