@@ -2,6 +2,8 @@
 #define IMAGESCANNER_H
 #include <QImage>
 #include "configuration.h"
+#include "floatfann.h"
+#include "fann_cpp.h"
 
 class ImageScanner
 {
@@ -15,10 +17,13 @@ private:
     const QSize _imageScaleStep;
     const QPoint _startFaceBoxPoint;
     const QPoint _faceBoxPointStep;
+	FANN::neural_net _net;
+	FANN::neural_net _net2;
 
-    QList<QRect> scannPicture(const QImage &image);
+	QList<QRect> scannPicture(const QImage &scaledImage, const QImage &orginalImage);
     bool checkRect(const QImage &face);
     QList<QRect> scaleImage(const QImage &image);
+	void histogramEqualization(QImage *img);
 
 
 };

@@ -1,0 +1,4 @@
+﻿D:/testfaces
+32 32
+D:/64_0005.net
+D:/ann2.net

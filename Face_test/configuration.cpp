@@ -4,22 +4,17 @@ Configuration::Configuration()
 {
 }
 
-Configuration::Configuration(QDir directory, QSize faceSize){
-    _directory = directory;
-    _faceSize = faceSize;
+Configuration::Configuration(QDir directory, QSize faceSize, QString netPath, QString netPath2):
+	_directory(directory),
+	_faceSize(faceSize),
+	_netPath(netPath),
+	_netPath2(netPath2)
+{
 }
 
 Configuration::Configuration(Configuration &cfg){
     _directory = cfg.getDirectory();
     _faceSize = cfg.getFaceSize();
-}
-
-void Configuration::setDirectory(QDir directory){
-    _directory = directory;
-}
-
-void Configuration::setFaceSize(QSize faceSize){
-    _faceSize = faceSize;
 }
 
 QSize Configuration::getFaceSize(){
@@ -28,4 +23,12 @@ QSize Configuration::getFaceSize(){
 
 QDir Configuration::getDirectory(){
     return _directory;
+}
+
+QString Configuration::getNetPath(){
+	return _netPath;
+}
+
+QString Configuration::getNetPath2(){
+	return _netPath2;
 }

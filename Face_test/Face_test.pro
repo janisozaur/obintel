@@ -26,6 +26,6 @@ HEADERS += \
     imagescanner.h
 
 win32{
-    INCLUDEPATH += C:/OI_face/include
-    LIBS += -L C:/OI_face/libs -lfann
+	INCLUDEPATH += D:/Data/Study/OI/fann2.1.0/src/include
+	LIBS += -L D:/Data/Study/OI/fann2.1.0/src/.libs -lfann
 }

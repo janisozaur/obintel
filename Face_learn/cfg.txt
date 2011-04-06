@@ -1,0 +1,5 @@
+﻿D:/pl_faces/faces
+D:/pl_faces/nonfaces
+32 32
+D:/faces_bezhis.dat
+D:/ann_bezhis.net

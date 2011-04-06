@@ -11,10 +11,12 @@ Configuration* CfgReader::readConfiguration(QString cfgPath){
     QTextStream stream(&file);
     QDir dir(stream.readLine());
     QStringList strList = stream.readLine().split(" ");
-    QSize size(strList.at(0).toInt(), strList.at(1).toInt());
+	QSize size(strList.at(0).toInt(), strList.at(1).toInt());
+	QString netPath = stream.readLine();
+	QString netPath2 = stream.readLine();
     file.close();
 
-    return new Configuration(dir, size);
+	return new Configuration(dir, size, netPath, netPath2);
 }
 
 CfgReader::CfgReader()

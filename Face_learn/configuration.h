@@ -2,22 +2,27 @@
 #define CONFIGURATION_H
 #include <QSize>
 #include <QDir>
+#include <QString>
 
 class Configuration
 {
 public:
-    Configuration();
-    Configuration(QDir directory, QSize faceSize);
 
-    void setFaceSize(QSize faceSize);
-    void setDirectory(QDir directory);
-
+	Configuration(QDir facesDirectory, QDir nonFacesDirectory, QSize faceSize,
+				  QString dataSavePath, QString netSavePath);
     QSize getFaceSize() const;
-    QDir getDirectory() const;
+	QDir getFacesDirectory() const;
+	QDir getNonFacesDirectory() const;
+	QString getDataSavePath() const;
+	QString getNetSavePath() const;
 
 private:
-    QDir _directory;
+	Configuration();
+	QDir _facesDirectory;
+	QDir _nonFacesDirectory;
     QSize _faceSize;
+	QString _dataSavePath;
+	QString _netSavePath;
 };
 
 #endif // CONFIGURATION_H

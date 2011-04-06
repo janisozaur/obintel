@@ -18,15 +18,15 @@ TEMPLATE = app
 SOURCES += main.cpp \
     facesextractor.cpp \
     configuration.cpp \
-    cfgreader.cpp
+	cfgreader.cpp
+
 
 HEADERS += \
     facesextractor.h \
     configuration.h \
-    cfgreader.h
+	cfgreader.h
 
 win32{
-    INCLUDEPATH += C:/OI_face/include
-
-    LIBS += -L C:/OI_face/libs -lfann
+	INCLUDEPATH += D:/Data/Study/OI/fann2.1.0/src/include
+	LIBS += -L D:/Data/Study/OI/fann2.1.0/src/.libs -lfann
 }

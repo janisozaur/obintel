@@ -6,19 +6,20 @@
 class Configuration
 {
 public:
-    Configuration();
-    Configuration(QDir directory, QSize faceSize);
+	Configuration(QDir directory, QSize faceSize, QString netPath, QString netPath2);
     Configuration(Configuration &cfg);
-
-    void setFaceSize(QSize faceSize);
-    void setDirectory(QDir directory);
 
     QSize getFaceSize();
     QDir getDirectory();
+	QString getNetPath();
+	QString getNetPath2();
 
 private:
+	Configuration();
     QDir _directory;
     QSize _faceSize;
+	QString _netPath;
+	QString _netPath2;
 };
 
 #endif // CONFIGURATION_H
