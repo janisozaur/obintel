@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <floatfann.h>
 #include <fann_cpp.h>
+#include <QSettings>
 
 const QString cfgPath("cfg.txt");
 
@@ -22,19 +23,21 @@ int printCallback(FANN::neural_net &net, FANN::training_data &train,
 
 void train(Configuration *cfg)
 {
-
-	const float learning_rate = 0.9f;
-	const unsigned int numLayers = 3;
-	const unsigned int numInput = 1024;
-	const unsigned int numHidden = 32;
-	const unsigned int numOutput = 1;
-	const float desiredError = 0.0001f;
-	const unsigned int maxIterations = 1000;
-	const unsigned int iterationsBetweenReports = 100;
+	QString fileName(QDir::homePath() + "/" + QCoreApplication::applicationName() + ".ini");
+	qDebug() << "using config file:" << fileName;
+	QSettings settings(fileName, QSettings::IniFormat);
+	const float learningRate = settings.value("learningRate", 0.8).toFloat();
+	const unsigned int numLayers = settings.value("numLayers", 3).toInt();
+	const unsigned int numInput = settings.value("numInput", 1024).toInt();
+	const unsigned int numHidden = settings.value("numHidden", 32).toInt();
+	const unsigned int numOutput = settings.value("numOutput", 1).toInt();
+	const float desiredError = settings.value("desiredError", 0.0001f).toFloat();
+	const unsigned int maxIterations = settings.value("maxIterations", 3000).toInt();
+	const unsigned int iterationsBetweenReports = settings.value("iterationsBetweenReports", 100).toInt();
 
 	FANN::neural_net net;
 	net.create_standard(numLayers, numInput, numHidden, numOutput);
-	net.set_learning_rate(learning_rate);
+	net.set_learning_rate(learningRate);
 	net.set_activation_steepness_hidden(0.5);
 	net.set_activation_steepness_output(0.5);
 	net.set_learning_momentum(0.6);
@@ -60,6 +63,9 @@ void train(Configuration *cfg)
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
+	QCoreApplication::setApplicationName("faces");
+	QCoreApplication::setOrganizationDomain("wacjan.com");
+	QCoreApplication::setOrganizationName("wacjan");
 	Configuration *cfg = CfgReader::readConfiguration(cfgPath);
 	QString param;
 	if(argc > 1){
