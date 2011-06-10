@@ -13,12 +13,22 @@ ParameterReader::ParameterReader() : _input(stdin)
 void ParameterReader::readParameters(){
 	QString command;
 
+	int cnt = 0;
     do{
 		qDebug() << ">> ";
-        command = _input.readLine();
+		if (_input.atEnd()) {
+			command = "exit";
+		} else {
+			command = _input.readLine();
+			if (command.isEmpty()) {
+				if (++cnt == 3) {
+					command = "exit";
+				}
+			}
+		}
         chooseAction(command);
 
-    } while(!command.startsWith("exit"));
+	} while(!command.startsWith("exit"));
 }
 
 void ParameterReader::chooseAction(QString command){
