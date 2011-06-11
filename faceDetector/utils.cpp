@@ -114,6 +114,7 @@ void Utils::testNetwork(Configuration &cfg){
 		const QFileInfo fileInfo = fileList.at(i);
 
 		QImage image(fileInfo.absoluteFilePath());
+		qDebug() << "format:" << image.format();
 		image = image.convertToFormat(QImage::Format_RGB32);
 
 		QList<QRect> faceBoxes(scaleImage(image, cfg));
@@ -155,7 +156,7 @@ void Utils::testNetwork(Configuration &cfg){
 	cfg.networks2 = NULL;
 }
 
-QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg)
+QList<QRect> Utils::scaleImage(const QImage &image, const Configuration &cfg)
 {
 	// don't force useless synchronization by not using the same shared list
 	// in each of threads, but rather one-per-thread approach; concatenate them
@@ -187,7 +188,7 @@ QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg)
 	return result;
 }
 
-QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, const int &thread)
+QList<QRect> Utils::scannImage(const QImage &image, const Configuration &cfg, const int &thread)
 {
 	QList<QRect> faces;
 
@@ -227,15 +228,16 @@ QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, const in
 	return faces;
 }
 
-bool Utils::checkRect(const QImage &face, Configuration &cfg, struct fann *ann, struct fann *ann2)
+bool Utils::checkRect(const QImage &face, const Configuration &cfg, struct fann *ann, struct fann *ann2)
 {
 	//histogramEqualization(&img);
 
-	const QRgb *tab = (QRgb*)face.constBits();
-	float *pixels = new float[face.width()*face.height()];
+	const QRgb *tab = (QRgb *)face.constBits();
+	const int size = face.width()*face.height();
+	float *pixels = new float[size];
 
-	for(int i = 0; i < face.width()*face.height(); ++i){
-
+	for(int i = 0; i < size; ++i)
+	{
 		pixels[i] = qRed(*tab) / 255.0;
 		++tab;
 	}
