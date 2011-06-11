@@ -138,44 +138,56 @@ void Utils::testNetwork(Configuration &cfg){
 	cfg.networks2 = NULL;
 }
 
-QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg) {
-
-	QList<QRect> faces;
-
-	for(QSize size = cfg._orginalImageSize; // = _minImageSize;
-		size.width() > cfg._minImageSize.width();
-		size -= cfg._imageScaleStep)
-	{
-		//scannImage(image.scaled(size), cfg, ann);
-		faces.append(scannImage(image.scaled(size), cfg));
-	}
-
-	return faces;
-}
-
-QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg){
-
+QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg)
+{
 	// don't force useless synchronization by not using the same shared list
 	// in each of threads, but rather one-per-thread approach; concatenate them
 	// into result after all work is done
 	QList<QRect> *faces = new QList<QRect>[cfg.threads];
 
+	int start = cfg._orginalImageSize.width();
+	int end = cfg._minImageSize.width();
+	int count = (start - end) / cfg._imageScaleStep.width();
+	//qDebug() << "count:" << count;
+	// since the time required to process each scaled image is variable, use
+	// dynamic scheduling to achieve better workload balancing. the overhead
+	// caused by dynamic scheduler is neglected by the program speedup
+#pragma omp parallel for num_threads(cfg.threads) schedule(dynamic)
+	for (int i = 0; i < count; i++)
+	{
+		QSize size = cfg._orginalImageSize - (i * cfg._imageScaleStep);
+		const int thread = omp_get_thread_num();
+		//qDebug() << "starting size:" << size << "thread:" << thread;
+		//scannImage(image.scaled(size), cfg, ann);
+		faces[thread].append(scannImage(image.scaled(size), cfg, thread));
+		//qDebug() << "finished size:" << size << "thread:" << thread;
+	}
+	QList<QRect> result;
+	for (int i = 0; i < cfg.threads; i++) {
+		result.append(faces[i]);
+	}
+	delete [] faces;
+	return result;
+}
+
+QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, const int &thread)
+{
+	QList<QRect> faces;
+
+	// fann is re-entrant, so don't waste resources on creating networks for
+	// each thread, each image, each scale, but re-use them: one per thread
+	struct fann *ann = cfg.networks[thread];
+	struct fann *ann2 = cfg.networks2[thread];
 
 	int start = cfg._startFaceBoxPoint.x();
 	int end = image.width() - cfg._faceSize.width();
 	int count = (end - start) / cfg._faceBoxPointStep.x();
-#pragma omp parallel for num_threads(cfg.threads)
 	for (int i = 0; i < count; i++) {
 		int startx = cfg._startFaceBoxPoint.x() + i * cfg._faceBoxPointStep.x();
-		const int thread = omp_get_thread_num();
 		QPoint faceBoxMovePoint(startx, 0);
 		QRect faceBox(cfg._startFaceBoxPoint, cfg._faceSize);
 		faceBox.moveTo(faceBoxMovePoint);
 
-		// fann is re-entrant, so don't waste resources on creating networks for
-		// each thread, each image, each scale, but re-use them: one per thread
-		struct fann *ann = cfg.networks[thread];
-		struct fann *ann2 = cfg.networks2[thread];
 		for(;faceBoxMovePoint.y() < image.height() - cfg._faceSize.height();
 			faceBoxMovePoint.setY(faceBoxMovePoint.y() + cfg._faceBoxPointStep.y()))
 		{
@@ -191,16 +203,11 @@ QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg){
 				int width = faceBox.width() * cfg._orginalImageSize.width() / image.width();
 				int height = faceBox.height() * cfg._orginalImageSize.height() / image.height();
 				QRect box(topLeftX, topLeftY, width, height);
-				faces[thread].append(box);
+				faces.append(box);
 			}
 		}
 	}
-	QList<QRect> result;
-	for (int i = 0; i < cfg.threads; i++) {
-		result.append(faces[i]);
-	}
-	delete [] faces;
-	return result;
+	return faces;
 }
 
 bool Utils::checkRect(const QImage &face, Configuration &cfg, struct fann *ann, struct fann *ann2){
