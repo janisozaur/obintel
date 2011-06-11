@@ -35,6 +35,7 @@ public:
 	QPoint _faceBoxPointStep;
 	QSize _faceSize;
 	QString _directory;
+	QString _outputDirectory;
 	QSize _orginalImageSize;
 	float _testThreshold;
 

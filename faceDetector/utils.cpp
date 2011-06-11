@@ -102,6 +102,12 @@ void Utils::testNetwork(Configuration &cfg){
 	}
 
 	QString total(QString::number(fileList.size()));
+	QDir out = QDir::currentPath();
+	bool created = out.mkpath(cfg._outputDirectory);
+	if (!created) {
+		qFatal("Cannot write results to %s", cfg._outputDirectory.toStdString().c_str());
+	}
+	out.cd(cfg._outputDirectory);
 	QElapsedTimer t;
 	t.start();
 	for (int i = 0; i < fileList.size(); i++) {
@@ -111,10 +117,10 @@ void Utils::testNetwork(Configuration &cfg){
 
 		QList<QRect> faceBoxes(scaleImage(image, cfg));
 
-		QFile file(fileInfo.absolutePath()+"/"+fileInfo.baseName()+".txt");
+		QFile file(out.path() + "/" + fileInfo.baseName() + ".txt");
 
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-			qWarning("Nie mozna zapisac wynikow");
+			qWarning() << "Nie mozna zapisac wynikow do " << file.fileName();
 		}
 
 		QTextStream stream(&file);

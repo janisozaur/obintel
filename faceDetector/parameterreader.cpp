@@ -39,10 +39,19 @@ void ParameterReader::chooseAction(QString command){
 
     if("test" == parameters.at(0)){
 
-		cfg._annSaveFile = parameters.at(1);
-		cfg._annSaveFile2 = parameters.at(2);
-		cfg._directory = parameters.at(3);
-		cfg._testThreshold = parameters.at(4).toFloat();
+		if (parameters.size() == 5) {
+			cfg._annSaveFile = parameters.at(1);
+			cfg._annSaveFile2 = parameters.at(2);
+			cfg._directory = parameters.at(3);
+			cfg._outputDirectory = parameters.at(3);
+			cfg._testThreshold = parameters.at(4).toFloat();
+		} else {
+			cfg._annSaveFile = parameters.at(1);
+			cfg._annSaveFile2 = parameters.at(2);
+			cfg._directory = parameters.at(3);
+			cfg._outputDirectory = parameters.at(4);
+			cfg._testThreshold = parameters.at(5).toFloat();
+		}
 
 		Utils::testNetwork(cfg);
 
