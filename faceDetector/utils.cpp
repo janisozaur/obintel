@@ -4,6 +4,9 @@
 #include <QFileInfoList>
 #include <QDir>
 #include <QImage>
+#include <cstring>
+#include <QElapsedTimer>
+#include <omp.h>
 
 Utils::Utils()
 {
@@ -72,42 +75,70 @@ int Utils::printCallback(struct fann *net, struct fann_train_data *train,
 
 void Utils::testNetwork(Configuration &cfg){
 
-	struct fann *ann = fann_create_from_file(cfg._annSaveFile.toStdString().c_str());
-	struct fann *ann2 = fann_create_from_file(cfg._annSaveFile2.toStdString().c_str());
 
 	QDir dir(cfg._directory);
 	QStringList filters;
 	filters << "*.png" << "*.jpg";
 	dir.setNameFilters(filters);
 	QFileInfoList fileList = dir.entryInfoList(QDir::Files);
-	QList<QRect> faceBoxes;
 
-	foreach(QFileInfo fileInfo, fileList){
+	// use parallel-single construct in order to let omp_get_num_threads() get
+	// correct thread count
+#pragma omp parallel
+	{
+#pragma omp single
+		{
+			cfg.threads = omp_get_num_threads();
+		}
+	}
+	// since fann is not thread-safe, but re-entrant, create as many networks
+	// as many there are threads
+	qDebug() << "threads:" << cfg.threads;
+	cfg.networks = new struct fann *[cfg.threads];
+	cfg.networks2 = new struct fann *[cfg.threads];
+	for (int i = 0; i < cfg.threads; i++) {
+		cfg.networks[i] = fann_create_from_file(cfg._annSaveFile.toStdString().c_str());
+		cfg.networks2[i] = fann_create_from_file(cfg._annSaveFile2.toStdString().c_str());
+	}
+
+	QElapsedTimer t;
+	t.start();
+	for (int i = 0; i < fileList.size(); i++) {
+		const QFileInfo fileInfo = fileList.at(i);
 
 		QImage image(fileInfo.absoluteFilePath());
-		qDebug() << fileInfo.absoluteFilePath();
 
-		faceBoxes = scaleImage(image, cfg, ann, ann2);
+		QList<QRect> faceBoxes(scaleImage(image, cfg));
 
 		QFile file(fileInfo.absolutePath()+"/"+fileInfo.baseName()+".txt");
 
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-
-			qWarning() << "Nie mozna zapisac wynikow";
+			qWarning("Nie mozna zapisac wynikow");
 		}
 
 		QTextStream stream(&file);
-		foreach(QRect rect, faceBoxes){
-
+		for (int j = 0; j < faceBoxes.size(); j++) {
+			const QRect rect = faceBoxes.at(j);
 			stream << rect.topLeft().x() << " " << rect.topLeft().y() << " "
-					  << rect.bottomRight().x() << " " << rect.bottomRight().y() << "\n";
+				   << rect.bottomRight().x() << " " << rect.bottomRight().y() << "\n";
 		}
 
 		file.close();
 	}
+	for (int i = 0; i < cfg.threads; i++) {
+		fann_destroy(cfg.networks[i]);
+		fann_destroy(cfg.networks2[i]);
+	}
+	int msecs = t.elapsed();
+	qDebug() << "time taken:" << msecs << "msecs";
+
+	delete [] cfg.networks;
+	delete [] cfg.networks2;
+	cfg.networks = NULL;
+	cfg.networks2 = NULL;
 }
 
-QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg, struct fann *ann, struct fann *ann2){
+QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg) {
 
 	QList<QRect> faces;
 
@@ -116,32 +147,42 @@ QList<QRect> Utils::scaleImage(const QImage &image, Configuration &cfg, struct f
 		size -= cfg._imageScaleStep)
 	{
 		//scannImage(image.scaled(size), cfg, ann);
-		faces.append(scannImage(image.scaled(size), cfg, ann, ann2));
+		faces.append(scannImage(image.scaled(size), cfg));
 	}
 
 	return faces;
 }
 
-QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, struct fann *ann, struct fann *ann2){
+QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg){
 
-	QList<QRect> faces;
+	// don't force useless synchronization by not using the same shared list
+	// in each of threads, but rather one-per-thread approach; concatenate them
+	// into result after all work is done
+	QList<QRect> *faces = new QList<QRect>[cfg.threads];
 
-	QRect faceBox(cfg._startFaceBoxPoint, cfg._faceSize);
 
-	for(QPoint faceBoxMovePoint = cfg._startFaceBoxPoint;
-		faceBoxMovePoint.x() < image.width() - cfg._faceSize.width();
-		faceBoxMovePoint.setX(faceBoxMovePoint.x() + cfg._faceBoxPointStep.x()))
-	{
-		faceBoxMovePoint.setY(0);
+	int start = cfg._startFaceBoxPoint.x();
+	int end = image.width() - cfg._faceSize.width();
+	int count = (end - start) / cfg._faceBoxPointStep.x();
+#pragma omp parallel for num_threads(cfg.threads)
+	for (int i = 0; i < count; i++) {
+		int startx = cfg._startFaceBoxPoint.x() + i * cfg._faceBoxPointStep.x();
+		const int thread = omp_get_thread_num();
+		QPoint faceBoxMovePoint(startx, 0);
+		QRect faceBox(cfg._startFaceBoxPoint, cfg._faceSize);
 		faceBox.moveTo(faceBoxMovePoint);
 
+		// fann is re-entrant, so don't waste resources on creating networks for
+		// each thread, each image, each scale, but re-use them: one per thread
+		struct fann *ann = cfg.networks[thread];
+		struct fann *ann2 = cfg.networks2[thread];
 		for(;faceBoxMovePoint.y() < image.height() - cfg._faceSize.height();
 			faceBoxMovePoint.setY(faceBoxMovePoint.y() + cfg._faceBoxPointStep.y()))
 		{
 			faceBox.moveTo(faceBoxMovePoint);
 
 			//jesli twarz to dodajemy do listy
-			if(checkRect(image.copy(faceBox), cfg, ann, ann2)){
+			if(checkRect(image.copy(faceBox), cfg, ann, ann2)) {
 				//skalowanie
 //				static int f = 0;
 //				scaledImage.copy(faceBox).save(QString("D:/duzy-%1.png").arg(f++));
@@ -150,11 +191,16 @@ QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, struct f
 				int width = faceBox.width() * cfg._orginalImageSize.width() / image.width();
 				int height = faceBox.height() * cfg._orginalImageSize.height() / image.height();
 				QRect box(topLeftX, topLeftY, width, height);
-				faces.append(box);
+				faces[thread].append(box);
 			}
 		}
 	}
-	return faces;
+	QList<QRect> result;
+	for (int i = 0; i < cfg.threads; i++) {
+		result.append(faces[i]);
+	}
+	delete [] faces;
+	return result;
 }
 
 bool Utils::checkRect(const QImage &face, Configuration &cfg, struct fann *ann, struct fann *ann2){

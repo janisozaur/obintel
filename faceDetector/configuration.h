@@ -1,8 +1,11 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
+
 #include <QString>
 #include <QSize>
 #include <QPoint>
+
+struct fann;
 
 class Configuration
 {
@@ -35,6 +38,10 @@ public:
 	QSize _orginalImageSize;
 	float _testThreshold;
 
+	struct fann **networks;
+	struct fann **networks2;
+
+	int threads;
 };
 
 #endif // CONFIGURATION_H

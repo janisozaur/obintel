@@ -33,4 +33,9 @@ Configuration::Configuration()
 	this->_orginalImageSize.setHeight(768);
 	this->_orginalImageSize.setWidth(1024);
 	this->_testThreshold = 0.99;
+
+	this->networks = NULL;
+	this->networks2 = NULL;
+
+	this->threads = 1;
 }

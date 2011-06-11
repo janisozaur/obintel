@@ -34,4 +34,6 @@ unix {
 	LIBS += -L/usr/local/lib
 }
 
-LIBS += -lfann
+LIBS += -lfann -lgomp
+
+QMAKE_CXXFLAGS += -fopenmp

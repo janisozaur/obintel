@@ -33,9 +33,9 @@ private:
 			unsigned int max_epochs, unsigned int epochs_between_reports,
 			float desired_error, unsigned int epochs);
 
-	static QList<QRect> scaleImage(const QImage &image, Configuration &cfg, struct fann *ann, struct fann *ann2);
+	static QList<QRect> scaleImage(const QImage &image, Configuration &cfg);
 
-	static QList<QRect> scannImage(const QImage &image, Configuration &cfg, struct fann *ann, struct fann *ann2);
+	static QList<QRect> scannImage(const QImage &image, Configuration &cfg);
 
 	static bool checkRect(const QImage &face, Configuration &cfg,  struct fann *ann, struct fann *ann2);
 
