@@ -101,6 +101,7 @@ void Utils::testNetwork(Configuration &cfg){
 		cfg.networks2[i] = fann_create_from_file(cfg._annSaveFile2.toStdString().c_str());
 	}
 
+	QString total(QString::number(fileList.size()));
 	QElapsedTimer t;
 	t.start();
 	for (int i = 0; i < fileList.size(); i++) {
@@ -122,16 +123,25 @@ void Utils::testNetwork(Configuration &cfg){
 			stream << rect.topLeft().x() << " " << rect.topLeft().y() << " "
 				   << rect.bottomRight().x() << " " << rect.bottomRight().y() << "\n";
 		}
-
 		file.close();
+
+		qreal percent = (qreal)(i + 1) * 100.0 / fileList.size();
+		QString percentStr(QString::number(percent));
+		percentStr = percentStr.rightJustified(5, QLatin1Char(' '), true);
+		QString info("%1\% (%2 of %3): %4");
+		info = info.arg(percentStr,
+						QString::number(i + 1).rightJustified(total.length()),
+						total, fileInfo.filePath());
+		qDebug() << info.toStdString().c_str();
 	}
 	for (int i = 0; i < cfg.threads; i++) {
 		fann_destroy(cfg.networks[i]);
 		fann_destroy(cfg.networks2[i]);
 	}
 	int msecs = t.elapsed();
-	qDebug() << "time taken:" << msecs << "msecs";
-
+	qDebug() << "time taken to process" << fileList.size() << "images:" << msecs
+			 << "msecs. one picture per"
+			 << (qreal)msecs / (qreal)fileList.size() << "msecs";
 	delete [] cfg.networks;
 	delete [] cfg.networks2;
 	cfg.networks = NULL;
