@@ -114,6 +114,7 @@ void Utils::testNetwork(Configuration &cfg){
 		const QFileInfo fileInfo = fileList.at(i);
 
 		QImage image(fileInfo.absoluteFilePath());
+		image = image.convertToFormat(QImage::Format_RGB32);
 
 		QList<QRect> faceBoxes(scaleImage(image, cfg));
 
@@ -226,13 +227,11 @@ QList<QRect> Utils::scannImage(const QImage &image, Configuration &cfg, const in
 	return faces;
 }
 
-bool Utils::checkRect(const QImage &face, Configuration &cfg, struct fann *ann, struct fann *ann2){
-
-	QImage img = face.convertToFormat(QImage::Format_RGB32);
-
+bool Utils::checkRect(const QImage &face, Configuration &cfg, struct fann *ann, struct fann *ann2)
+{
 	//histogramEqualization(&img);
 
-	QRgb *tab = (QRgb*)img.bits();
+	const QRgb *tab = (QRgb*)face.constBits();
 	float *pixels = new float[face.width()*face.height()];
 
 	for(int i = 0; i < face.width()*face.height(); ++i){
