@@ -37,7 +37,7 @@ private:
 
 	static QList<QRect> scannImage(const QImage &image, const Configuration &cfg, const int &thread);
 
-	static bool checkRect(const QImage &face, const Configuration &cfg,  struct fann *ann, struct fann *ann2);
+	static bool checkRect(const QImage &face, const Configuration &cfg,  struct fann *ann, struct fann *ann2, const int &thread);
 
 	static QList<QImage> prepareFaces(Configuration& cfg);
 

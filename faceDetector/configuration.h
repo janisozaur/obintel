@@ -41,6 +41,7 @@ public:
 
 	struct fann **networks;
 	struct fann **networks2;
+	float **faceData;
 
 	int threads;
 };

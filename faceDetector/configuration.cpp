@@ -36,6 +36,7 @@ Configuration::Configuration()
 
 	this->networks = NULL;
 	this->networks2 = NULL;
+	this->faceData = NULL;
 
 	this->threads = 1;
 }

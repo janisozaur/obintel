@@ -100,6 +100,10 @@ void Utils::testNetwork(Configuration &cfg){
 		cfg.networks[i] = fann_create_from_file(cfg._annSaveFile.toStdString().c_str());
 		cfg.networks2[i] = fann_create_from_file(cfg._annSaveFile2.toStdString().c_str());
 	}
+	cfg.faceData = new float *[cfg.threads];
+	for (int i = 0; i < cfg.threads; i++) {
+		cfg.faceData[i] = new float[cfg._faceSize.width() * cfg._faceSize.height()];
+	}
 
 	QString total(QString::number(fileList.size()));
 	QDir out = QDir::currentPath();
@@ -154,6 +158,11 @@ void Utils::testNetwork(Configuration &cfg){
 	delete [] cfg.networks2;
 	cfg.networks = NULL;
 	cfg.networks2 = NULL;
+	for (int i = 0; i < cfg.threads; i++) {
+		delete [] cfg.faceData[i];
+	}
+	delete [] cfg.faceData;
+	cfg.faceData = NULL;
 }
 
 QList<QRect> Utils::scaleImage(const QImage &image, const Configuration &cfg)
@@ -212,7 +221,7 @@ QList<QRect> Utils::scannImage(const QImage &image, const Configuration &cfg, co
 			faceBox.moveTo(faceBoxMovePoint);
 
 			//jesli twarz to dodajemy do listy
-			if(checkRect(image.copy(faceBox), cfg, ann, ann2)) {
+			if(checkRect(image.copy(faceBox), cfg, ann, ann2, thread)) {
 				//skalowanie
 //				static int f = 0;
 //				scaledImage.copy(faceBox).save(QString("D:/duzy-%1.png").arg(f++));
@@ -228,13 +237,13 @@ QList<QRect> Utils::scannImage(const QImage &image, const Configuration &cfg, co
 	return faces;
 }
 
-bool Utils::checkRect(const QImage &face, const Configuration &cfg, struct fann *ann, struct fann *ann2)
+bool Utils::checkRect(const QImage &face, const Configuration &cfg, struct fann *ann, struct fann *ann2, const int &thread)
 {
 	//histogramEqualization(&img);
 
 	const QRgb *tab = (QRgb *)face.constBits();
 	const int size = face.width()*face.height();
-	float *pixels = new float[size];
+	float *pixels = cfg.faceData[thread];
 
 	for(int i = 0; i < size; ++i)
 	{
@@ -247,13 +256,8 @@ bool Utils::checkRect(const QImage &face, const Configuration &cfg, struct fann 
 	//qDebug() << "dd: " << result << "\t" << result2;
 
 	if((result + result2)/2.0 > cfg._testThreshold){
-
-		delete []pixels;
 		return true;
-
 	} else {
-
-		delete []pixels;
 		return false;
 	}
 }
