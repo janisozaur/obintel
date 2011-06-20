@@ -37,3 +37,6 @@ unix {
 LIBS += -lfann -lgomp
 
 QMAKE_CXXFLAGS += -fopenmp
+
+#QMAKE_CXXFLAGS += -march=corei7-avx -mtune=corei7-avx
+QMAKE_CXXFLAGS += -march=core2 -mtune=core2
