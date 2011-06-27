@@ -36,7 +36,13 @@ HEADERS += \
     configuration.h \
     parameterreader.h
 
+LIBS += -lfann
+
 win32{
         INCLUDEPATH += D:/Data/Study/OI/fann2.1.0/src/include
-        LIBS += -L D:/Data/Study/OI/fann2.1.0/src/.libs -lfann
+		LIBS += -L D:/Data/Study/OI/fann2.1.0/src/.libs
+}
+
+unix {
+	LIBS += -L/usr/local/lib
 }
