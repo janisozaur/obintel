@@ -115,11 +115,13 @@ void Utils::train(){
     valDir.setSorting(QDir::Name);
     QFileInfoList validFileList = valDir.entryInfoList();
 
-    qDebug() << "Liczba zbiorów treningowych: " +  fileList.size();
-    qDebug() << "Liczba zbiorów walidacyjnych: " + validFileList.size();
+    qDebug() << "Liczba zbiorow treningowych: " <<  fileList.size();
+    qDebug() << "Liczba zbiorow walidacyjnych: " << validFileList.size();
     fann *ann = NULL;
 
     fann_train_data *valData = NULL;
+
+    float avgMSE = 0;
 
     for(int i = 0; i < fileList.size(); ++i){
 
@@ -147,31 +149,11 @@ void Utils::train(){
         logStream << "ANN: " << i << "\t" <<  QDateTime::currentDateTime().toString() << endl;
         logFile.close();
 
-        float currentMSE = 0;
-        float lastMSE = 100000.0;
-        int counter = 0;
+        //nauka
+        fann_train_on_file(ann, fileList.at(i).absoluteFilePath().toStdString().c_str(), _cfg._epochs, _cfg._epochsBetweenReports, _cfg._desiredError);
 
-        //petla nauki, jesli blad na zbiorze walidacyjnym wzrosnie dwa razy wtedy przerywamy nauke
-        for(int j = 0; j < _cfg._maxEpochs/_cfg._epochs; ++j){
-
-            //nauka
-            fann_train_on_file(ann, fileList.at(i).absoluteFilePath().toStdString().c_str(), _cfg._epochs, _cfg._epochsBetweenReports, _cfg._desiredError);
-
-            //walidacja
-            currentMSE = fann_test_data(ann, valData);
-
-            if(currentMSE > lastMSE){
-                ++counter;
-            } else {
-                counter = 0;
-            }
-
-            if(counter > 1){
-                break;
-            }
-
-            lastMSE = currentMSE;
-        }
+        //walidacja
+        avgMSE += fann_test_data(ann, valData);
 
         //zapisanie nauczonej sieci
         QString s((_cfg._annSaveDir + "ann-%1.ann").arg(i));
@@ -180,11 +162,13 @@ void Utils::train(){
         delete ann;
         ann = NULL;
 
-        delete valData;
+        delete[] valData;
         valData = NULL;
 
         qDebug() << "Nauczono i zapisano siec: " + s;
     }
+
+    qDebug() << "Sredni blad klasyfikatora: "  << avgMSE/fileList.size();
 
 }
 
@@ -219,7 +203,6 @@ void Utils::test(){
     int numCorrect = 0;
 
     while(!in.atEnd()){
-
         line = in.readLine();
         splitLine = line.split(" ");
         input = new float[splitLine.size()];
@@ -232,6 +215,7 @@ void Utils::test(){
         line = in.readLine();
         output = line.toFloat();
 
+        result = 0;
         //testowanie dla wszystkich sieci
         for(int j = 0; j < annList.size(); ++j){
 
@@ -259,7 +243,7 @@ void Utils::test(){
 }
 
 bool Utils::checkResult(float result, float expected){
-    if((std::abs(expected) - result) < _cfg._testThreshold){
+    if(std::abs(expected) - std::abs(result) < _cfg._testThreshold){
         return true;
     }
     return false;
