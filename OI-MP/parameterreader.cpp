@@ -60,7 +60,7 @@ void ParameterReader::chooseAction(QString command){
 
         QList<int> representatives = kmeans.picUpRepresentatives(microArray);
 
-        utils.prepareTrainData(microArray, representatives, 1, true);
+        utils.prepareTrainData(microArray, representatives, cfg._expectedOutput, true);
         //utils.prepareDataForSVM(microArray, representatives, 1, true);
 
         QString s = "D:/oi_mp/liczebnosc_grup.log";

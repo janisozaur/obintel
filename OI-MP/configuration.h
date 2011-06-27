@@ -24,7 +24,7 @@ public:
     int _numLayers;
     int _maxEpochs;
     int _epochs;
-
+    int _expectedOutput;
     float _testThreshold;
 
 
