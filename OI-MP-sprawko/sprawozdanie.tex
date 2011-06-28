@@ -27,13 +27,13 @@
 \maketitle
 
 \section{Cel}
-Zadanie polegało na analizie danych biomedycznych uzyskanych dzięki technice płytek genowych(mikromacierzy). Zadanie składało się z dwóch etapów: redukcji ilości cech opisujących osobnika oraz stworzenia klasyfikatora który byłby w stanie określić na podstawie zredukowanego zbioru cech przynależność osobnika do jednej z klas. W naszym przypadku druga część zadania polegała na stworzeniu klasyfikatora potrafiącego rozpoznać, który typ napoju zawierających kwasy tłuszczowe wypiła badana osoba. W doświadczeniu wykorzystano dwa typy napojów: PUFA i SUFA.
+Zadanie polegało na analizie danych biomedycznych uzyskanych dzięki technice płytek genowych (mikromacierzy). Zadanie składało się z dwóch etapów: redukcji ilości cech opisujących osobnika oraz stworzenia klasyfikatora który byłby w stanie określić na podstawie zredukowanego zbioru cech przynależność osobnika do jednej z klas. W naszym przypadku druga część zadania polegała na stworzeniu klasyfikatora potrafiącego rozpoznać, który typ napoju zawierających kwasy tłuszczowe wypiła badana osoba. W doświadczeniu wykorzystano dwa typy napojów: PUFA i SUFA.
 
 \section{Wprowadzenie}
 \subsection{Micromacierze}
 Technika mikromacierzy pozwala na jednoczesną analizę ekspresji tysięcy genów. W celu stworzenia mikromacierzy pobierane są dwie grupy komórek: testowa i odniesienia.
 Z pobranych komórek zostają wyodrębnione łańcuch mRNA. Ponieważ mRNA łatwo ulega degradacji poddaje się je procesowi odwrotnej transkrypcji, otrzymując komplementarne cDNA.\\ \indent Następnie cDNA zostaje zaznaczone barwnikiem różnym dla komórek testowych i odniesienia. Barwnik pozwala zidentyfikować obecność cząsteczki na płytce. Jako barwnika najczęściej używa się farb fluorescencyjnych.\\
-\indent Kolejnym etapem jest hybrydyzacja polegająca an zanurzeniu płytki w roztworze zabarwionego cDNA. Cząsteczki cDNA łączą się z punktami(sondami) na płytce zawierającymi komplementarne sekwencje DNA.\\
+\indent Kolejnym etapem jest hybrydyzacja polegająca an zanurzeniu płytki w roztworze zabarwionego cDNA. Cząsteczki cDNA łączą się z punktami (sondami) na płytce zawierającymi komplementarne sekwencje DNA.\\
 \indent Po zakończeniu hybrydyzacji płytka zostaje umieszcona w skanerze gdzie następuje odczyt ekspresji genów czyli zabarwienia punktów płytki \footnote{\cite{metodyklasyfikacji}}.
 \subsection{Metoda k-średnich}
 W zadaniu użyto metody k-średnich. Jest to jedna z metod grupujących pozwalająca znaleźć grupy genów o zbliżonej ekspresji. Metoda polega na utworzeniu pewnej liczby grup i przypisania elementów do grup bazując na pewnej mierze podobieństwa. Obiekty podobne do siebie powinny być umieszczane w tej samej grupie. Metoda dąży do minimalizacji różnic wewnątrz grup i maksymalizacji różnic między różnymi grupami\footnote{\cite{metodyklasyfikacji}}\\\\
@@ -57,17 +57,10 @@ Odległość euklidesowa:
   e(x, y) = \sqrt{\displaystyle \sum_{i = 1}^{N} (x_i - y_i)^2}
 \end{equation}
 
-Współczynnik korelacji Pearsona:
+Współczynnik korelacji Pearsona, znany również jako wpsółczynnik korelacji Spearmana:
 \begin{equation}
   p(x,y) = \frac{\displaystyle\sum_{i = 1}^{N}(x_i - \bar{x})(y_i -
 \bar{y})}{\sqrt{\displaystyle \sum_{i=1}^N (x_i - \bar{x})^2}\sqrt{\displaystyle
-\sum_{i=1}^N (y_i - \bar{y})^2}}
-\end{equation}
-
-Współczynnik korelacji Spearmana:
-\begin{equation}
-  p(x,y) = \frac{\displaystyle\sum_{i = 1}^{N}(x_i - \bar{x})(y_i -
-\bar{y})}{\sqrt{\displaystyle \sum_{i=1}^N (x_i - \bar{x})^2 \displaystyle
 \sum_{i=1}^N (y_i - \bar{y})^2}}
 \end{equation}
 
@@ -122,9 +115,9 @@ Za naukę i testowanie sieci odpowiada klasa \verb+Utils+. W programie wykorzyst
 \section{Materiały i metody}
 Badania zostały wykonane na zestawie oznaczonym indeksem GSE13466\footnote{\cite{research}}. Zestaw zawiera profile genów pobranych z komórek krwi obwodowej od 21 młodych mężczyzn. \\W zestawie można wyróżnić cztery klasy.
 \begin{itemize}
-\item[•] 6 godzin przed spożyciem PUFA(wielonienasycone kwasy tłuszczowe)
+\item[•] 6 godzin przed spożyciem PUFA (wielonienasycone kwasy tłuszczowe)
 \item[•] 6 godzin po spożyciu PUFA
-\item[•] 6 godzin przed spożyciem SFA(nasycone kwasy tłuszczowe)
+\item[•] 6 godzin przed spożyciem SFA (nasycone kwasy tłuszczowe)
 \item[•] 6 godzin po spożyciu SFA\\
 \end{itemize}
 
@@ -132,14 +125,14 @@ Metodę k-średnich przetestowano dla wartości k równego: 100, 200 oraz 400. W
 
 Po przetestowaniu metody k-średnich przeprowadzono 4 testy obejmujące stworzenie klasyfikatora. Algorytm k-średnich był za każdym razem wykonywany oddzielnie dla grupy SUFA i grupy PUFA. W każdym z testów uczono sieci z momentum równym 0.6 i współczynnikiem nauki równym 0.6. Jako algorytm nauki wykorzystano dostarczony z biblioteką FANN algorytm FANN\_RPROP. Funkcje aktywacji warstwy ukrytej i wyjściowej ustawiono na FANN\_SIGMOID\_SYMETRIC.
 
-W trakcie analizy wyników za poprawny wynik klasyfikatora(sieci) uznawano wartości różniące się od wartości oczekiwanej nie więcej niż o 0.01.\\\\
+W trakcie analizy wyników za poprawny wynik klasyfikatora (sieci) uznawano wartości różniące się od wartości oczekiwanej nie więcej niż o 0.01.\\\\
 \textbf{Ogólny przebieg testów:}
 \begin{itemize}
 \item[•] uruchomienie algorytmu k-średnich,
 \item[•] wybranie przedstawicieli wygenerowanych grup,
-\item[•] zapisanie danych w formacie umożliwiającym naukę sieci, czyli to co wcześniej było kolumnami macierz teraz jest wektorami wejściowymi sieci, określenie oczekiwanych wyjść sieci(1 dla PUFA, -1 dla SUFA),
+\item[•] zapisanie danych w formacie umożliwiającym naukę sieci, czyli to co wcześniej było kolumnami macierz teraz jest wektorami wejściowymi sieci, określenie oczekiwanych wyjść sieci (1 dla PUFA, -1 dla SUFA),
 \item[•] podzielenie zbioru danych treningowych na cztery rozłączne zbiory,
-\item[•] uruchomienie nauki czterech sieci neuronowych z których każda ma inny zbiór walidujący(jeden z czterech wyznaczonych w poprzednim kroku), wszystkie sieci razem stanowią klasyfikator,
+\item[•] uruchomienie nauki czterech sieci neuronowych z których każda ma inny zbiór walidujący (jeden z czterech wyznaczonych w poprzednim kroku), wszystkie sieci razem stanowią klasyfikator,
 \item[•] policzenie średniego błędu dla wszystkich sieci, jest to średni błąd stworzonego klasyfikatora,
 \item[•] przetestowanie klasyfikatora na całym zbiorze danych.\\
 \end{itemize}
@@ -206,25 +199,9 @@ grupom dla $k=200$, Współczynnik korelacji Pearsona}
 
 \begin{figure}
   \centering
-  \includegraphics[width=10cm]{img/spearman100.png}
-  \caption{Wykres przedstawiający liczbę cech przyporządkowanych poszczególnym
-grupom dla $k=100$, Współczynnik korelacji Spearmana}
-  \label{spearman.100}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=10cm]{img/spearman200.png}
-  \caption{Wykres przedstawiający liczbę cech przyporządkowanych poszczególnym
-grupom dla $k=200$, Współczynnik korelacji Spearmana}
-  \label{spearman.200}
-\end{figure}
-
-\begin{figure}
-  \centering
   \includegraphics[width=10cm]{img/spearman400.png}
   \caption{Wykres przedstawiający liczbę cech przyporządkowanych poszczególnym
-grupom dla $k=400$, Współczynnik korelacji Spearmana}
+grupom dla $k=400$, Współczynnik korelacji Pearsona}
   \label{spearman.400}
 \end{figure}
 
@@ -241,7 +218,7 @@ grupom dla $k=400$, Współczynnik korelacji Spearmana}
 \end{table}
 
 \section{Dyskusja}
-Porównując wyniki działania metody k-średnich można zauważyć, że dla współczynników Pearsona i Spearmana liczebności poszczególnych grup są bardziej wyrównane niż dla odległości Euclidesa. W przypadku odległości Euclidesa występuje więcej grup z wieloma elementami, jak i grup, które mają zaledwie kilka elementów.
+Porównując wyniki działania metody k-średnich można zauważyć, że dla współczynnika Pearsona liczebności poszczególnych grup są bardziej wyrównane niż dla odległości Euclidesa. W przypadku odległości Euclidesa występuje więcej grup z wieloma elementami, jak i grup, które mają zaledwie kilka elementów.
 
 We wszystkich przeprowadzonych testach uzyskano klasyfikatory dające bardzo dobre rezultaty. Większość próbek została sklasyfikowana poprawnie. W przypadku pierwszego testu liczba grup będąca wynikiem algorytmu k-średnich okazała się zbyt mała aby poprawnie sklasyfikować wszystkie próbki. W pierwszym teście błąd klasyfikatora jest największy.
 
