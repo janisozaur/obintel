@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{multirow}
 
 \studycycle{Informatyka, studia dzienne, mgr II st.}
 \coursesemester{I}
@@ -160,7 +161,16 @@ liczba iteracji algorytmu k-średnich = 100\\
 liczba sieci = 4\\
 liczba neuronów warstwy ukrytej = 35\\
 Wektor wejściowy przekazywany do sieci neuronowej składał się z wartości genów zarówno przed jak i po spożyciu kwasów tłuszczowych.\\\\
-Wyniki wszystkich testów przedstawiono w tabeli \ref{testTab1}.
+
+Po wykonaniu testów została obliczona procentowa skuteczność programu oraz policzone współczynniki dokładności, kompletności i ich średnia harmoniczna.
+
+\begin{equation}
+dokładność = \frac{liczba\; elementów\; poprawnie\; przypisanych\; do\; klasy}{liczba\; elementów\; przypisanych\; do\; klasy}
+\end{equation}
+
+\begin{equation}
+kompletność = \frac{liczba\; elementów\; poprawnie\; przypisanych\; do\; klasy}{liczba\; elementów\; należących\; do\; klasy}
+\end{equation}
 
 \section{Wyniki}
 Na rysunkach od \ref{euclidean.100} do \ref{spearman.400} przedstawiono wyniki działania algorytmu k-średnich. W tabeli \ref{testTab1} zamieszczono wyniki testów klasyfikatorów uzyskanych w trakcie realizacji zadania.
@@ -209,13 +219,106 @@ grupom dla $k=400$, Współczynnik korelacji Pearsona}
 \caption{Wyniki testów programu}
 \label{testTab1}
 \begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
- \textbf{Numer testu} & \textbf{Średni błąd klasyfikatora} & \textbf{Procent poprawnie sklasyfikowanych próbek} & \textbf{Procent poprawnie sklasyfikowanych PUFA} & \textbf{Procent poprawnie sklasyfikowanych SUFA} \\ \hline
+ \textbf{Numer testu} & \textbf{Średni MSE dla wszystkich sieci} & \textbf{Procent poprawnie sklasyfikowanych próbek} & \textbf{Procent poprawnie sklasyfikowanych PUFA} & \textbf{Procent poprawnie sklasyfikowanych SUFA} \\ \hline
  1 & 6.011e-05 & 64.00  & 100.00 & 28.57	\\ \hline
  2 & 7.660e-15 & 100.00 & 100.00 & 100.00	\\ \hline
  3 & 1.607e-14 & 100.00 & 100.00 & 100.00 	\\ \hline
  4 & 4.936e-14 & 100.00 & 100.00 & 100.00 	\\ \hline
 \end{tabular}
 \end{table}
+
+\begin{table}
+\caption{Wyniki poszczególnych sieci dla testu 1}
+\label{testTab2}
+\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ \textbf{Numer sieci} & \textbf{Klasa} & \textbf{Dokładność} & \textbf{Kompletność} & \textbf{F} \\ \hline
+\multirow{2}{*}{1} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{2} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 0.286 & 0.444 \\ \hline
+\multirow{2}{*}{3} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000\\ \hline
+\multirow{2}{*}{4} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{Średnia}
+& PUFA &       &       & 1.000 \\
+& SUFA &       &       & 0.861 \\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Wyniki poszczególnych sieci dla testu 2}
+\label{testTab3}
+\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ \textbf{Numer sieci} & \textbf{Klasa} & \textbf{Dokładność} & \textbf{Kompletność} & \textbf{F} \\ \hline
+\multirow{2}{*}{1} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{2} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{3} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000\\ \hline
+\multirow{2}{*}{4} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{Średnia}
+& PUFA &       &       & 1.000 \\
+& SUFA &       &       & 1.000 \\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Wyniki poszczególnych sieci dla testu 3}
+\label{testTab4}
+\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ \textbf{Numer sieci} & \textbf{Klasa} & \textbf{Dokładność} & \textbf{Kompletność} & \textbf{F} \\ \hline
+\multirow{2}{*}{1} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{2} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{3} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000\\ \hline
+\multirow{2}{*}{4} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{Średnia}
+& PUFA &       &       & 1.000 \\
+& SUFA &       &       & 1.000 \\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Wyniki poszczególnych sieci dla testu 4}
+\label{testTab5}
+\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ \textbf{Numer sieci} & \textbf{Klasa} & \textbf{Dokładność} & \textbf{Kompletność} & \textbf{F} \\ \hline
+\multirow{2}{*}{1} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{2} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{3} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000\\ \hline
+\multirow{2}{*}{4} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{Średnia}
+& PUFA &       &       & 1.000 \\
+& SUFA &       &       & 1.000 \\\hline
+\end{tabular}
+\end{table}
+
 
 \section{Dyskusja}
 Porównując wyniki działania metody k-średnich można zauważyć, że dla współczynnika Pearsona liczebności poszczególnych grup są bardziej wyrównane niż dla odległości Euclidesa. W przypadku odległości Euclidesa występuje więcej grup z wieloma elementami, jak i grup, które mają zaledwie kilka elementów.
