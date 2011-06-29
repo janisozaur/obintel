@@ -137,30 +137,36 @@ W trakcie analizy wyników za poprawny wynik klasyfikatora (sieci) uznawano wart
 \item[•] policzenie średniego błędu dla wszystkich sieci, jest to średni błąd stworzonego klasyfikatora,
 \item[•] przetestowanie klasyfikatora na całym zbiorze danych.\\
 \end{itemize}
-\textbf{Test1}\\
+\textbf{Test 1}\\
 liczba grup = 50\\
 liczba iteracji algorytmu k-średnich = 100\\
 liczba sieci = 4\\
 liczba neuronów warstwy ukrytej = 10\\
 Wektor wejściowy przekazywany do sieci neuronowej składał się z wartości genów zarówno przed jak i po spożyciu kwasów tłuszczowych.\\\\
-\textbf{Test2}\\
+\textbf{Test 2}\\
 liczba grup = 400\\
 liczba iteracji algorytmu k-średnich = 100\\
 liczba sieci = 4\\
 liczba neuronów warstwy ukrytej = 30\\
 Wektor wejściowy przekazywany do sieci neuronowej składał się z wartości genów zarówno przed jak i po spożyciu kwasów tłuszczowych.\\\\
-\textbf{Test3}\\
+\textbf{Test 3}\\
 liczba grup = 400\\
 liczba iteracji algorytmu k-średnich = 100\\
 liczba sieci = 4\\
 liczba neuronów warstwy ukrytej = 20\\
 Wektor wejściowy przekazywany do sieci neuronowej składał się tylko z wartości genów po spożyciu kwasów tłuszczowych.\\\\
-\textbf{Test4}\\
+\textbf{Test 4}\\
 liczba grup = 600\\
 liczba iteracji algorytmu k-średnich = 100\\
 liczba sieci = 4\\
 liczba neuronów warstwy ukrytej = 35\\
 Wektor wejściowy przekazywany do sieci neuronowej składał się z wartości genów zarówno przed jak i po spożyciu kwasów tłuszczowych.\\\\
+\textbf{Test 5}\\
+liczba grup = 400\\
+liczba iteracji algorytmu k-średnich = 100\\
+liczba sieci = 4\\
+liczba neuronów warstwy ukrytej = 20\\
+Wektor wejściowy przekazywany do sieci neuronowej składał się tylko z wartości genów po spożyciu kwasów tłuszczowych lub tylko z genów przed spożyciem, czyli w tym teście wyróżniamy trzy klasy PUFA, SUFA, BASELINE.\\\\
 
 Po wykonaniu testów została obliczona procentowa skuteczność programu oraz policzone współczynniki dokładności, kompletności i ich średnia harmoniczna.
 
@@ -173,7 +179,7 @@ Po wykonaniu testów została obliczona procentowa skuteczność programu oraz p
 \end{equation}
 
 \section{Wyniki}
-Na rysunkach od \ref{euclidean.100} do \ref{spearman.400} przedstawiono wyniki działania algorytmu k-średnich. W tabeli \ref{testTab1} zamieszczono wyniki testów klasyfikatorów uzyskanych w trakcie realizacji zadania. Tabele \ref{testTab2}-\ref{testTab5} prezentują wyniki poszczególnych sieci.
+Na rysunkach od \ref{euclidean.100} do \ref{spearman.400} przedstawiono wyniki działania algorytmu k-średnich. W tabeli \ref{testTab1} zamieszczono wyniki testów klasyfikatorów uzyskanych w trakcie realizacji zadania. Tabele \ref{testTab2}-\ref{testTab6} prezentują wyniki poszczególnych sieci.
 \begin{figure}
   \centering
   \includegraphics[width=10cm]{img/euclidean100.png}
@@ -218,12 +224,13 @@ grupom dla $k=400$, Współczynnik korelacji Pearsona}
 \begin{table}
 \caption{Wyniki testów programu}
 \label{testTab1}
-\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
- \textbf{Numer testu} & \textbf{Średni MSE dla wszystkich sieci} & \textbf{Procent poprawnie sklasyfikowanych próbek} & \textbf{Procent poprawnie sklasyfikowanych PUFA} & \textbf{Procent poprawnie sklasyfikowanych SUFA} \\ \hline
- 1 & 6.011e-05 & 64.00  & 100.00 & 28.57	\\ \hline
- 2 & 7.660e-15 & 100.00 & 100.00 & 100.00	\\ \hline
- 3 & 1.607e-14 & 100.00 & 100.00 & 100.00 	\\ \hline
- 4 & 4.936e-14 & 100.00 & 100.00 & 100.00 	\\ \hline
+\begin{tabular}{|p{1.5cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+ \textbf{Numer testu} & \textbf{Średni MSE dla wszystkich sieci} & \textbf{Procent poprawnie sklasyfikowanych próbek} & \textbf{Procent poprawnie sklasyfikowanych PUFA} & \textbf{Procent poprawnie sklasyfikowanych SUFA} & \textbf{Procent poprawnie sklasyfikowanych BASELINE} \\ \hline
+ 1 & 6.011e-05 & 64.00  & 100.00 & 28.57 & 	\\ \hline
+ 2 & 7.660e-15 & 100.00 & 100.00 & 100.00 &	\\ \hline
+ 3 & 1.607e-14 & 100.00 & 100.00 & 100.00 &	\\ \hline
+ 4 & 4.936e-14 & 100.00 & 100.00 & 100.00 &	\\ \hline
+ 5 & 0.005     & 97.60  & 95.45  & 95.45 & 100.00	\\ \hline
 \end{tabular}
 \end{table}
 
@@ -316,6 +323,29 @@ grupom dla $k=400$, Współczynnik korelacji Pearsona}
 \multirow{2}{*}{Średnia}
 & PUFA &       &       & 1.000 \\
 & SUFA &       &       & 1.000 \\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Wyniki poszczególnych sieci dla testu 5}
+\label{testTab6}
+\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ \textbf{Numer sieci} & \textbf{Klasa} & \textbf{Dokładność} & \textbf{Kompletność} & \textbf{F} \\ \hline
+\multirow{2}{*}{1} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 0.953 & 0.976 \\ \hline
+\multirow{2}{*}{2} 
+& PUFA & 1.000 & 0.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{3} 
+& PUFA & 1.000 & 1.000 & 1.000 \\
+& SUFA & 1.000 & 1.000 & 1.000\\ \hline
+\multirow{2}{*}{4} 
+& PUFA & 1.000 & 0.953 & 0.976 \\
+& SUFA & 1.000 & 1.000 & 1.000 \\ \hline
+\multirow{2}{*}{Średnia}
+& PUFA &       &       & 0.994 \\
+& SUFA &       &       & 0.994 \\\hline
 \end{tabular}
 \end{table}
 
